@@ -23,12 +23,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        val layoutManager = LinearLayoutManager(applicationContext)
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(applicationContext)
         myAdapter = ToDoAdapter()
         recyclerView?.adapter = myAdapter
-
+        myAdapter!!.addTest()
         //проверка на пустые поля
         binding?.addButton?.setOnClickListener{
             viewModel.addElementForEditText(this, binding!!)

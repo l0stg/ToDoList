@@ -35,17 +35,28 @@ class DataDiffCallback(
 
 class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
 
-    var myList = mutableListOf<Items>()
+    private var myList =  mutableListOf<Items>()
+
+
+
+    fun addTest(){
+        (1..10).forEach {
+            val name = "its $it name"
+            val desc = "its $it desc"
+            val items = Items(name, desc)
+            myList.add(items)
+        }
+    }
 
     //функция DiffUtil для обновления данных
-    /*private fun changesRV(fillListCopy: MutableList<Items>) {
+    private fun changesRV(fillListCopy: MutableList<Items>) {
         val diffCallback = DataDiffCallback(myList, fillListCopy)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         myList = fillListCopy.toMutableList()
-        itemsList =
-            myList // чтобы при пересоздании активити сохранялись данные, надо бы уйти от этого
+        //itemsList =
+         //   myList // чтобы при пересоздании активити сохранялись данные, надо бы уйти от этого
         diffResult.dispatchUpdatesTo(this)
-    }*/
+    }
 
     class MyViewHolder(binding: MyTodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
         private val name: TextView = binding.tvName
@@ -63,11 +74,14 @@ class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.bind(myList[position])
+        holder.itemView.setOnClickListener {
+            myList.removeAt(position)
+            changesRV()
+        }
     }
 
     override fun getItemCount(): Int = myList.size
 
-    @SuppressLint("NotifyDataSetChanged")
     fun addElement(context: Context, binding: ActivityMainBinding){
       if (binding.editTextName.text.isEmpty() && binding.editTextDescription.text.isEmpty())
             showMessage(context, "Введите название и(или) описание задачи")
@@ -79,15 +93,15 @@ class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
             val name = binding.editTextName.text.toString()
             val description = binding.editTextDescription.text.toString()
             val items = Items(name = name, description = description)
-            //val myListCopy = myList.toMutableList()
-            myList.add(items)
-            this.notifyDataSetChanged()
-            println(myList)
-            //changesRV(myListCopy)
+            val myListCopy = myList.toMutableList()
+            myListCopy.add(items)
+            println(myListCopy)
+           // changesRV(myListCopy)
             binding.editTextName.text.clear()
             binding.editTextDescription.text.clear()
         }
     }
+
     fun deleteItem(position: Int){
         val myListCopy = myList.toMutableList()
         myListCopy.removeAt(position)
