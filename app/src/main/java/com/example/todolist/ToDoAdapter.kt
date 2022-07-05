@@ -33,11 +33,9 @@ class DataDiffCallback(
     }
 }
 
-class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
+class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
 
-    private var myList =  mutableListOf<Items>()
-
-
+     var myList =  ArrayList<Items>()
 
     fun addTest(){
         (1..10).forEach {
@@ -46,13 +44,15 @@ class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
             val items = Items(name, desc)
             myList.add(items)
         }
+
     }
 
     //функция DiffUtil для обновления данных
     private fun changesRV(fillListCopy: MutableList<Items>) {
-        val diffCallback = DataDiffCallback(myList, fillListCopy)
+        val diffCallback = DataDiffCallback(this.myList, fillListCopy)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        myList = fillListCopy.toMutableList()
+        this.myList = fillListCopy.toMutableList() as ArrayList<Items>
+        //println(myList)
         //itemsList =
          //   myList // чтобы при пересоздании активити сохранялись данные, надо бы уйти от этого
         diffResult.dispatchUpdatesTo(this)
@@ -61,28 +61,29 @@ class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
     class MyViewHolder(binding: MyTodoViewBinding) : RecyclerView.ViewHolder(binding.root) {
         private val name: TextView = binding.tvName
         private val description: TextView = binding.tvDescription
+        val deleteButton = binding.imDeleteButton
         fun bind(data: Items) {
             name.text = data.name
             description.text = data.description
         }
+
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int, ): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = MyTodoViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.bind(myList[position])
-        holder.itemView.setOnClickListener {
-            myList.removeAt(position)
-            changesRV()
+        holder.deleteButton.setOnClickListener {
+           onItemClicked(position)
         }
     }
 
     override fun getItemCount(): Int = myList.size
 
-    fun addElement(context: Context, binding: ActivityMainBinding){
+    /*fun addElement(context: Context, binding: ActivityMainBinding) {
       if (binding.editTextName.text.isEmpty() && binding.editTextDescription.text.isEmpty())
             showMessage(context, "Введите название и(или) описание задачи")
         else if (binding.editTextName.text.isEmpty())
@@ -93,22 +94,25 @@ class ToDoAdapter() : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
             val name = binding.editTextName.text.toString()
             val description = binding.editTextDescription.text.toString()
             val items = Items(name = name, description = description)
-            val myListCopy = myList.toMutableList()
-            myListCopy.add(items)
-            println(myListCopy)
-           // changesRV(myListCopy)
+            val myListCopy = this.myList.toMutableList()
+            println(myList)
+            //myListCop.add(items)
+            //println(myListCop)
+            this.notifyDataSetChanged()
+            //changesRV(myList)
             binding.editTextName.text.clear()
             binding.editTextDescription.text.clear()
         }
-    }
-
+    }*/
     fun deleteItem(position: Int){
-        val myListCopy = myList.toMutableList()
-        myListCopy.removeAt(position)
+        val myListCopy = this.myList.toMutableList()
+        //this.myList.removeAt(position)
+        println(myList)
+        notifyDataSetChanged()
+        //showMessage("Удалили $position")
+        //println("Удалили $position")
         //changesRV(myListCopy)
     }
-
-
 }
 
 

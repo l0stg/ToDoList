@@ -15,17 +15,20 @@ import com.example.todolist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
-    private var myAdapter: ToDoAdapter? = null
+    var myAdapter: ToDoAdapter? = null
     private val viewModel by lazy {
         ViewModel()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(applicationContext)
-        myAdapter = ToDoAdapter()
+        myAdapter = ToDoAdapter() { position ->
+            viewModel.deleteItem(position)
+        }
         recyclerView?.adapter = myAdapter
         myAdapter!!.addTest()
         //проверка на пустые поля
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-fun showMessage(context: Context, text: String){
-    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+fun showMessage(text: String){
+    //Toast.makeText(MainActivity().applicationContext, text, Toast.LENGTH_LONG).show()
 }
 
