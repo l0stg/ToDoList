@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.annotation.UiThread
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
@@ -30,11 +31,10 @@ import com.example.todolist.databinding.MyTodoViewBinding
         return oldElement == newElement
     }
 }*/
+private val myList = ArrayList<Items>()// Я не знаю почему здесь работает
 
 class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
-
-    private val myList = ArrayList<Items>()
-    
+    //private val myList = ArrayList<Items>()// а здесь не работает
     fun addTest() {
         (1..10).forEach {
             val name = "its $it name"
@@ -46,7 +46,7 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
 
     fun deleteItem(position: Int) {
         //val myListCopy = this.myList.toMutableList()
-        this.myList.removeAt(position)
+        myList.removeAt(position)
         println(myList)
         this.notifyDataSetChanged()
         //showMessage("Удалили $position")
@@ -90,6 +90,7 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
 
     fun addElement(items: Items) {
         myList.add(items)
+        println(myList)
         this.notifyDataSetChanged()
     }
 }
