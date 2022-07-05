@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         myAdapter!!.addTest()
         //проверка на пустые поля
         binding?.addButton?.setOnClickListener{
-            viewModel.addElementForEditText(this, binding!!)
+            viewModel.addElementForEditText(binding!!)
             hideKeyboard()
         }
 

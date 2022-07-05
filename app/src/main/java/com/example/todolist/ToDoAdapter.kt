@@ -36,7 +36,6 @@ class DataDiffCallback(
 class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
 
      var myList =  ArrayList<Items>()
-
     fun addTest(){
         (1..10).forEach {
             val name = "its $it name"
@@ -44,7 +43,16 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
             val items = Items(name, desc)
             myList.add(items)
         }
+    }
 
+    fun deleteItem(position: Int){
+        val myListCopy = this.myList.toMutableList()
+        //this.myList.removeAt(position)
+        println(myList)
+        notifyDataSetChanged()
+        //showMessage("Удалили $position")
+        //println("Удалили $position")
+        //changesRV(myListCopy)
     }
 
     //функция DiffUtil для обновления данных
@@ -66,7 +74,6 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
             name.text = data.name
             description.text = data.description
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -83,8 +90,8 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
 
     override fun getItemCount(): Int = myList.size
 
-    /*fun addElement(context: Context, binding: ActivityMainBinding) {
-      if (binding.editTextName.text.isEmpty() && binding.editTextDescription.text.isEmpty())
+    fun addElement(binding: ActivityMainBinding) {
+   /*   if (binding.editTextName.text.isEmpty() && binding.editTextDescription.text.isEmpty())
             showMessage(context, "Введите название и(или) описание задачи")
         else if (binding.editTextName.text.isEmpty())
             showMessage(context,"Введите имя задачи")
@@ -102,17 +109,9 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
             //changesRV(myList)
             binding.editTextName.text.clear()
             binding.editTextDescription.text.clear()
-        }
-    }*/
-    fun deleteItem(position: Int){
-        val myListCopy = this.myList.toMutableList()
-        //this.myList.removeAt(position)
-        println(myList)
-        notifyDataSetChanged()
-        //showMessage("Удалили $position")
-        //println("Удалили $position")
-        //changesRV(myListCopy)
+        }*/
     }
+
 }
 
 
