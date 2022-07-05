@@ -1,11 +1,8 @@
 package com.example.todolist
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
@@ -24,31 +21,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        init()
+    }
+    private fun init() {
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
-        recyclerView?.layoutManager = LinearLayoutManager(applicationContext)
-        myAdapter = ToDoAdapter() { position ->
+        recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
+        myAdapter = ToDoAdapter { position ->
             viewModel.deleteItem(position)
         }
         recyclerView?.adapter = myAdapter
         myAdapter!!.addTest()
-        //проверка на пустые поля
-        binding?.addButton?.setOnClickListener{
-            viewModel.addElementForEditText(binding!!)
-            hideKeyboard()
-        }
 
-
-
-        //Удаление элемента
-        /*myAdapter!!.setOnItemClickListener(object : ToDoAdapter.OnItemClickListener {
-            override fun onItemClickDeleteButton(position: Int) {
-                deleteItem(position)
+        binding?.addButton?.setOnClickListener {
+            binding?.apply {
+                if (editTextName.text.isEmpty() && editTextDescription.text.isEmpty()) {
+                    showMessage(applicationContext, "Введите название и(или) описание задачи")
+                } else if (editTextName.text.isEmpty()) {
+                    showMessage(applicationContext, "Введите имя задачи")
+                } else if (editTextDescription.text.isEmpty()) {
+                    showMessage(applicationContext, "Введите описание задачи")
+                } else {
+                    val name = editTextName.text.toString()
+                    val description = editTextDescription.text.toString()
+                    val items = Items(name = name, description = description)
+                    viewModel.addElementForEditText(items)
+                    editTextName.text.clear()
+                    editTextDescription.text.clear()
+                    hideKeyboard()
+                }
             }
-        })*/
+        }
     }
 }
 
-fun showMessage(text: String){
-    //Toast.makeText(MainActivity().applicationContext, text, Toast.LENGTH_LONG).show()
+fun showMessage(context:Context, text: String){
+    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 }
 
