@@ -3,10 +3,12 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,23 +29,22 @@ class MainActivity : AppCompatActivity() {
         recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView?.adapter = myAdapter
 
+        fun <T> MutableLiveData<T>.subscribe(action: (T) -> Unit) {
+            observe(this@MainActivity) { it?.let { action(it) } }
+        }
         //использую LiveData для наблюдением
         with(viewModel) {
-            newItemsLiveData.observe(this@MainActivity) {
+            newItemsLiveData.subscribe{
                 myAdapter!!.addElement(it)
             }
-            positionLiveData.observe(this@MainActivity) {
-                it?.let {
+            positionLiveData.subscribe{
                     myAdapter!!.deleteItem(it)
-                }
             }
         }
         //Добавление элемента
         binding?.addButton?.setOnClickListener {
             binding?.apply {
-                    val name1 = editTextName.text.toString()
-                    val description1 = editTextDescription.text.toString()
-                    viewModel.addElementsViewModel(name1, description1, this@MainActivity)
+                    viewModel.addElementsViewModel(editTextName.text.toString(), editTextDescription.text.toString(), this@MainActivity)
                     editTextName.text.clear()
                     editTextDescription.text.clear()
                     hideKeyboard()
