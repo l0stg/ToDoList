@@ -12,7 +12,10 @@ import com.example.todolist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
-    var myAdapter: ToDoAdapter? = null
+    private val myAdapter by lazy{
+        ToDoAdapter{position ->
+        viewModel.deleteItem(position)}
+    }
     private val viewModel by lazy {
         ViewModel()
     }
@@ -26,11 +29,11 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
-        myAdapter = ToDoAdapter { position ->
-            viewModel.deleteItem(position)
-        }
+        //myAdapter = ToDoAdapter { position ->
+         //   viewModel.deleteItem(position)
+        //}
         recyclerView?.adapter = myAdapter
-        myAdapter!!.addTest()
+        myAdapter.addTest()
 
         binding?.addButton?.setOnClickListener {
             binding?.apply {
