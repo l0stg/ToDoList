@@ -34,19 +34,22 @@ class MainActivity : AppCompatActivity() {
         }
         //использую LiveData для наблюдением
         with(viewModel) {
-            newItemsLiveData.subscribe{
+            newItemsLiveData.subscribe {
                 myAdapter!!.addElement(it)
+                binding!!.editTextName.text.clear()
+                binding!!.editTextDescription.text.clear()
             }
-            positionLiveData.subscribe{
-                    myAdapter!!.deleteItem(it)
+            positionLiveData.subscribe {
+                myAdapter!!.deleteItem(it)
+            }
+            showMessageLiveData.subscribe {
+                showMessage(this@MainActivity, it)
             }
         }
         //Добавление элемента
         binding?.addButton?.setOnClickListener {
             binding?.apply {
-                    viewModel.addElementsViewModel(editTextName.text.toString(), editTextDescription.text.toString(), this@MainActivity)
-                    editTextName.text.clear()
-                    editTextDescription.text.clear()
+                    viewModel.addElementsViewModel(editTextName.text.toString(), editTextDescription.text.toString())
                     hideKeyboard()
                 }
             }
@@ -54,6 +57,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 fun showMessage(context:Context, text: String){
-    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 }
 
