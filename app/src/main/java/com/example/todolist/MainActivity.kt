@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     private var binding: ActivityMainBinding? = null
+
     var myAdapter : ToDoAdapter? = null
 
     private val viewModel by lazy {
@@ -24,16 +26,18 @@ class MainActivity : AppCompatActivity() {
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView?.adapter = myAdapter
-        //использую LiveData для наблюдением
-        viewModel.newItemsLiveData.observe(this, Observer {
-                myAdapter!!.addElement(it)
-        })
 
-        viewModel.positionLiveData.observe(this, Observer {
-            it?.let {
-                myAdapter!!.deleteItem(it)
+        //использую LiveData для наблюдением
+        with(viewModel) {
+            newItemsLiveData.observe(this@MainActivity) {
+                myAdapter!!.addElement(it)
             }
-        })
+            positionLiveData.observe(this@MainActivity) {
+                it?.let {
+                    myAdapter!!.deleteItem(it)
+                }
+            }
+        }
         //Добавление элемента
         binding?.addButton?.setOnClickListener {
             binding?.apply {
