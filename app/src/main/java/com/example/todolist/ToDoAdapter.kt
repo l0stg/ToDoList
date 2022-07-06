@@ -32,41 +32,20 @@ class DataDiffCallback(
     }
 }
 
-class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
+class ToDoAdapter(val onItemClicked: ((position: Int) -> Unit)): RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
 
-    private var myList = ArrayList<Items>()// а здесь не работает
+    private var myList = ArrayList<Items>()
 
-    fun set(items: ArrayList<Items>) {
-        this.myList = ArrayList()
-        this.myList = items
-        notifyDataSetChanged()
-    }
-
-    fun addTest() {
-        (1..3).forEach {
-            val name = "its $it name"
-            val desc = "its $it desc"
-            val items = Items(name, desc)
-            myList.add(items)
-        }
-        notifyDataSetChanged()
-    }
-
-    fun deleteItem(position: Int) {
-        val myListCopy = ArrayList(myList)
-        myListCopy.removeAt(position)
-        changesRV(position, myListCopy)
-    }
     //функция DiffUtil для обновления данных
-   private fun changesRV(position: Int, myListCopy: MutableList<Items>) {
+    private fun changesRV(position: Int, myListCopy: MutableList<Items>) {
         notifyItemRangeChanged(position, itemCount)
-        val diffCallback = DataDiffCallback(this.myList, myListCopy)
+        val diffCallback = DataDiffCallback(myList, myListCopy)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        this.myList = ArrayList(myListCopy)
+        myList = ArrayList(myListCopy)
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class MyViewHolder(item: View) : RecyclerView.ViewHolder(item) {
+    class MyViewHolder(item: View): RecyclerView.ViewHolder(item) {
         private val binding = MyTodoViewBinding.bind(item)
         val deleteButton = binding.imDeleteButton
         fun bind(data: Items) = with(binding) {
@@ -92,7 +71,13 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
     fun addElement(items: Items) {
         val myListCopy = ArrayList(myList)
         myListCopy.add(items)
-        changesRV(1, myListCopy)
+        changesRV(0, myListCopy)
+    }
+
+    fun deleteItem(position: Int) {
+        val myListCopy = ArrayList(myList)
+        myListCopy.removeAt(position)
+        changesRV(position, myListCopy)
     }
 }
 

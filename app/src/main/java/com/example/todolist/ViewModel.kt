@@ -5,7 +5,7 @@ import com.example.todolist.databinding.ActivityMainBinding
 
 class ViewModel {
     //Функция удаления и добавления элементов
-    var tasKList: MutableLiveData<Items> = MutableLiveData()
+    var newItemsLiveData: MutableLiveData<Items> = MutableLiveData()
     var positionLiveData: MutableLiveData<Int> = MutableLiveData()
 
     fun addElementsViewModel(name: String, description: String, context: Context) {
@@ -16,8 +16,8 @@ class ViewModel {
         } else if (description.isEmpty()) {
             showMessage(context, "Введите описание задачи")
         } else {
-            val newItems = Items(name, description)
-            tasKList.value = newItems
+            val item = Items(name, description)
+            newItemsLiveData.value = item
         }
     }
 

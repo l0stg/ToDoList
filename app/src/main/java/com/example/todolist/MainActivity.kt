@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
 
-//Без отложенной инцилизации, лямда выражение, test viewmodel
-
-
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
     var myAdapter : ToDoAdapter? = null
@@ -27,12 +24,9 @@ class MainActivity : AppCompatActivity() {
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView?.adapter = myAdapter
-        myAdapter!!.addTest()
         //использую LiveData для наблюдением
-        viewModel.tasKList.observe(this, Observer {
-            it?.let {
+        viewModel.newItemsLiveData.observe(this, Observer {
                 myAdapter!!.addElement(it)
-            }
         })
 
         viewModel.positionLiveData.observe(this, Observer {
@@ -40,7 +34,6 @@ class MainActivity : AppCompatActivity() {
                 myAdapter!!.deleteItem(it)
             }
         })
-        
         //Добавление элемента
         binding?.addButton?.setOnClickListener {
             binding?.apply {
@@ -54,7 +47,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 fun showMessage(context:Context, text: String){
     Toast.makeText(context, text, Toast.LENGTH_LONG).show()
