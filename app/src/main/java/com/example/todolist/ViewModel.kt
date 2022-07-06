@@ -1,8 +1,6 @@
 package com.example.todolist
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.todolist.databinding.ActivityMainBinding
 
 class ViewModel: ViewModel() {
     //Функция удаления и добавления элементов
