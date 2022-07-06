@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.databinding.MyTodoViewBinding
 
-/*class DataDiffCallback(
+class DataDiffCallback(
     private var oldList: MutableList<Items>,
     private var newList: MutableList<Items>
 ): DiffUtil.Callback() {
@@ -30,40 +30,41 @@ import com.example.todolist.databinding.MyTodoViewBinding
         val newElement = newList[newItemPosition]
         return oldElement == newElement
     }
-}*/
-private val myList = ArrayList<Items>()// Я не знаю почему здесь работает
+}
 
 class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.Adapter<ToDoAdapter.MyViewHolder>() {
-    //private val myList = ArrayList<Items>()// а здесь не работает
+
+    private var myList = ArrayList<Items>()// а здесь не работает
+
+    fun set(items: ArrayList<Items>) {
+        this.myList = ArrayList()
+        this.myList = items
+        notifyDataSetChanged()
+    }
+
     fun addTest() {
-        (1..10).forEach {
+        (1..3).forEach {
             val name = "its $it name"
             val desc = "its $it desc"
             val items = Items(name, desc)
             myList.add(items)
         }
+        notifyDataSetChanged()
     }
 
     fun deleteItem(position: Int) {
-        //val myListCopy = this.myList.toMutableList()
-        myList.removeAt(position)
-        println(myList)
-        this.notifyDataSetChanged()
-        //showMessage("Удалили $position")
-        //println("Удалили $position")
-        //changesRV(myListCopy)
+        val myListCopy = ArrayList(myList)
+        myListCopy.removeAt(position)
+        changesRV(position, myListCopy)
     }
-
     //функция DiffUtil для обновления данных
-   /* private fun changesRV(fillListCopy: MutableList<Items>) {
-        val diffCallback = DataDiffCallback(this.myList, fillListCopy)
+   private fun changesRV(position: Int, myListCopy: MutableList<Items>) {
+        notifyItemRangeChanged(position, itemCount)
+        val diffCallback = DataDiffCallback(this.myList, myListCopy)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        //this.myList = fillListCopy.toMutableList() as ArrayList<Items>
-        //println(myList)
-        //itemsList =
-        //   myList // чтобы при пересоздании активити сохранялись данные, надо бы уйти от этого
+        this.myList = ArrayList(myListCopy)
         diffResult.dispatchUpdatesTo(this)
-    }*/
+    }
 
     class MyViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = MyTodoViewBinding.bind(item)
@@ -89,9 +90,9 @@ class ToDoAdapter(var onItemClicked: ((position: Int) -> Unit)) : RecyclerView.A
     override fun getItemCount(): Int = myList.size
 
     fun addElement(items: Items) {
-        myList.add(items)
-        println(myList)
-        this.notifyDataSetChanged()
+        val myListCopy = ArrayList(myList)
+        myListCopy.add(items)
+        changesRV(1, myListCopy)
     }
 }
 
