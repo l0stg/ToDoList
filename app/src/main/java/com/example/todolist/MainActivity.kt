@@ -1,54 +1,61 @@
 package com.example.todolist
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.ActivityMainBinding
+import java.util.*
 
-
-lateinit var binding: ActivityMainBinding
-lateinit var myAdapter: ToDoAdapter
-lateinit var context: Context
 class MainActivity : AppCompatActivity() {
+
+    private var binding: ActivityMainBinding? = null
+
+    var myAdapter : ToDoAdapter? = null
+
+    private val viewModel by viewModels<MainViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val layoutManager = LinearLayoutManager(applicationContext)
-        val recyclerView: RecyclerView = binding.recyclerViewToDo
-        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-        myAdapter = ToDoAdapter(itemsList)
-        recyclerView.adapter = myAdapter
-        context = this
+        setContentView(binding?.root)
+        myAdapter = ToDoAdapter {viewModel.deleteItem(it)}
+        val recyclerView: RecyclerView? = binding?.recyclerViewToDo
+        recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
+        recyclerView?.adapter = myAdapter
 
-        //проверка на пустые поля
-        binding.addButton.setOnClickListener{
-                addElementForEditText()
-                hideKeyboard()
+        fun <T> MutableLiveData<T>.subscribe(action: (T) -> Unit) {
+            observe(this@MainActivity) { it?.let { action(it) } }
+        }
+        //использую LiveData для наблюдением
+        with(viewModel) {
+            newItemsLiveData.subscribe {
+                myAdapter!!.addElement(it)
+                binding!!.editTextName.text.clear()
+                binding!!.editTextDescription.text.clear()
             }
-
-        //Красивая полосочка между элементами
-        val dividerItemDecoration = DividerItemDecoration(
-            recyclerView.context,
-            layoutManager.orientation
-        )
-        recyclerView.addItemDecoration(dividerItemDecoration)
-
-        //Удаление элемента
-        myAdapter.setOnItemClickListener(object : ToDoAdapter.OnItemClickListener {
-            override fun onItemClickDeleteButton(position: Int) {
-                deleteItem(position)
+            positionLiveData.subscribe {
+                myAdapter!!.deleteItem(it)
             }
-        })
+            showMessageLiveData.subscribe {
+                showMessage(this@MainActivity, it)
+            }
+        }
+        //Добавление элемента
+        binding?.addButton?.setOnClickListener {
+            binding?.apply {
+                    viewModel.addElementsViewModel(editTextName.text.toString(), editTextDescription.text.toString())
+                    hideKeyboard()
+                }
+            }
+        }
     }
-}
 
-fun showMessage(text: String){
-    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+fun showMessage(context:Context, text: String){
+    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 }
 
