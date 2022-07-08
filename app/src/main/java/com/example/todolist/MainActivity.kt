@@ -2,6 +2,7 @@ package com.example.todolist
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -16,15 +17,13 @@ class MainActivity : AppCompatActivity() {
 
     var myAdapter : ToDoAdapter? = null
 
-    private val viewModel by lazy {
-        ViewModel()
-    }
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        myAdapter = ToDoAdapter { position -> viewModel.deleteItem(position) }
+        myAdapter = ToDoAdapter {viewModel.deleteItem(it)}
         val recyclerView: RecyclerView? = binding?.recyclerViewToDo
         recyclerView?.layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView?.adapter = myAdapter

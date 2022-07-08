@@ -2,7 +2,7 @@ package com.example.todolist
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class ViewModel: ViewModel() {
+class MainViewModel: ViewModel() {
     //Функция удаления и добавления элементов
     var newItemsLiveData: MutableLiveData<Items> = MutableLiveData()
     var positionLiveData: MutableLiveData<Int> = MutableLiveData()
